@@ -33,6 +33,7 @@ class Image{
 
 
     public function __construct($imgPath) {
+
         //判断图像的类型
         $res = exif_imagetype($imgPath);
 
@@ -90,7 +91,7 @@ class Image{
         $this->removeZero();
 
 
-        $this->drew();
+//        $this->drew();
 
     }
 
