@@ -51,7 +51,7 @@ class Image{
                 $this->_in_img = ImageCreateFromWbmp($imgPath);
                 break;
             default:
-                throw new Exception("不支持的图片格式!");
+                throw new \Exception("不支持的图片格式!");
                 break;
         }
 
@@ -230,7 +230,7 @@ class Image{
                 }
             }
         }
-        imagepng($hash_img,'./test1.png');
+//        imagepng($hash_img,'./test1.png');
         return $hash_img_data;
 
 

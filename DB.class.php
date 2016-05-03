@@ -30,7 +30,7 @@ class DB{
     public function connect(){
         try {
             $this->_db = new \PDO("mysql:host={$this->_db_host}:{$this->_db_port};dbname=".$this->_db_name, $this->_db_user, $this->_db_password);
-            echo '数据库连接成功';
+//            echo '数据库连接成功';
         } catch (\PDOException $e) {
             print "Error: " . $e->getMessage() . "<br/>";
             die();
