@@ -64,6 +64,7 @@ class Image{
     }
 
     /**
+     * 二值化，排除背景色，雪花等干扰项
      * @author mohuishou<1@lailin.xyz>
      */
     public function imageHash(){
@@ -83,15 +84,15 @@ class Image{
         }
 
 
-        $data=$this->removeHotSpots($data);
-        $data=$this->removeHotSpots($data);
-        $data=$this->removeHotSpots($data);
-        $this->_hash_data=$data;
+//        $data=$this->removeHotSpots($data);
+//        $data=$this->removeHotSpots($data);
+//        $data=$this->removeHotSpots($data);
+//        $this->_hash_data=$data;
         $this->_hash_data=$this->removeHotSpots($data);
-        $this->removeZero();
+//        $this->removeZero();
 
 
-//        $this->drew();
+        $this->drew();
 
     }
 
