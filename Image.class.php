@@ -84,15 +84,15 @@ class Image{
         }
 
 
-//        $data=$this->removeHotSpots($data);
-//        $data=$this->removeHotSpots($data);
-//        $data=$this->removeHotSpots($data);
+        $data=$this->removeHotSpots($data);
+        $data=$this->removeHotSpots($data);
+        $data=$this->removeHotSpots($data);
 //        $this->_hash_data=$data;
         $this->_hash_data=$this->removeHotSpots($data);
-//        $this->removeZero();
+        $this->removeZero();
 
 
-        $this->drew();
+//        $this->drew();
 
     }
 
