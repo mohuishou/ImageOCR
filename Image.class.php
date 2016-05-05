@@ -9,27 +9,28 @@
 namespace ImageOCR;
 class Image{
 
+    //标准化的图像的宽高信息，可调
     const HASH_W = 10;
     const HASH_H = 10;
 
+    //图像字符串的个数
     const CHAR_NUM=4;
 
-    /**
-     * 图像的大小信息
-     * 宽度：$_image_size[0]，高度：$_image_size[1]
-     * @var array
-     */
+    //图像的宽度与高度信息
     protected $_image_w;
     protected $_image_y;
+
     /**
      * 输入图像的句柄
      * @var resource
      */
     public $_in_img;
 
+    /**
+     * @var array $_hash_data 二值化的数组
+     */
     protected $_hash_data;
 
-    protected $_img_hash;
 
 
     public function __construct($imgPath) {
@@ -87,12 +88,11 @@ class Image{
         $data=$this->removeHotSpots($data);
         $data=$this->removeHotSpots($data);
         $data=$this->removeHotSpots($data);
-//        $this->_hash_data=$data;
         $this->_hash_data=$this->removeHotSpots($data);
         $this->removeZero();
 
+//        $this->draw();
 
-//        $this->drew();
 
     }
 
@@ -149,12 +149,13 @@ class Image{
 
 
     /**
+     * 去除零行
      * @author mohuishou<1@lailin.xyz>
-     * @param null $data
-     * @return null
+     * @param null $data 当为默认值null时，自动赋值为&$this->_hash_data;
+     * @return array $data 去掉零行之后的二值化数组
      */
     public function removeZero($data=null){
-        if($data==null) $data=&$this->_hash_data;
+        $data==null && $data=&$this->_hash_data;
         foreach ($data as $k=>$v){
             if(implode("",$v)==0) unset($data[$k]);
         }
@@ -163,11 +164,12 @@ class Image{
     }
 
     /**
+     * 用点阵的形式画出验证码图像，一般用于debug
      * @author mohuishou<1@lailin.xyz>
      * @param null $data
      */
-    public function drew($data=null){
-        if($data==null) $data=$this->_hash_data;
+    public function draw($data=null){
+        $data==null && $data=$this->_hash_data;
         foreach ($data as $v){
             foreach ($v as $val){
                 if($val){
@@ -181,9 +183,10 @@ class Image{
     }
 
     /**
+     * 分割图片，并将其标准化
      * @author mohuishou<1@lailin.xyz>
-     * @param $n
-     * @return array
+     * @param int $n 图片的第几个字符
+     * @return array $hash_data 标准化之后的二值化图像字符串
      */
     public function splitImage($n){
         $data=[];
@@ -334,19 +337,21 @@ class Image{
 
 
     /**
+     * 识别字符串
      * @author mohuishou<1@lailin.xyz>
-     * @return array
+     * @return array $res 识别成功的字符串数组
      */
     public function find() {
         $res = [];
 
+        //从数据库中取出特征值
         require_once "DB.class.php";
         $db=new DB();
         $samples=$db->get();
 
+        //分割字符串，并和特征值进行对比
         for($i = 0; $i < self::CHAR_NUM; $i++) {
             $hash= $this->splitImage($i);
-
             $res[]=$this->compare($hash,$samples);
         }
 
@@ -354,10 +359,11 @@ class Image{
     }
 
     /**
+     * 和特征值库进行对比
      * @author mohuishou<1@lailin.xyz>
-     * @param $hash
-     * @param $samples
-     * @return mixed
+     * @param array $hash 待识别的二值化图像字符串
+     * @param array $samples 特征值库的数组
+     * @return string $code 返回识别的字符
      */
     public function compare($hash,$samples) {
 
