@@ -10,7 +10,7 @@ class StorageFile{
     /**
      * 储存文件目录
      */
-    const FILE_DIR=__DIR__."./db/";
+    const FILE_DIR=__DIR__."/db/";
 
     /**
      * 储存文件路径
