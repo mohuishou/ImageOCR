@@ -5,13 +5,12 @@
  * Date: 2016/5/1 0001
  * Time: 20:44
  */
-require_once 'Image.class.php';
-require_once  'StorageFile.php';
-$db=new \ImageOCR\StorageFile();
+require_once 'vendor/autoload.php';
+$db=new \Mohuishou\ImageOCR\StorageFile();
 //$a=$db->get();
 //print_r($a);
 if(isset($_POST['send'])&&$_POST['send']=="send"){
-    $image=new \ImageOCR\Image("./img/inImgTemp.png");
+    $image=new \Mohuishou\ImageOCR\Image("./img/inImgTemp.png");
     $code=$_POST['code'];
     $code_arr=str_split($code);
 
@@ -23,7 +22,7 @@ if(isset($_POST['send'])&&$_POST['send']=="send"){
     echo "<script>location.href='./study.php?t=".time()."'</script>";
 
 }else{
-    $image=new \ImageOCR\Image("http://www.169ol.com/Mall/Code/getCode&1462104790492");
+    $image=new \Mohuishou\ImageOCR\Image("http://www.169ol.com/Mall/Code/getCode&1462104790492");
     imagepng($image->_in_img,"./img/inImgTemp.png");
 }
 

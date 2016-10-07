@@ -1,0 +1,18 @@
+{
+    "name": "mohuishou/image-ocr",
+    "description":"验证码识别",
+    "keywords":["image","ocr","验证码","验证码识别"],
+    "version":"0.1.0",
+    "license":"MIT",
+    "authors": [
+        {
+            "name": "mohuishou",
+            "email": "1@lailin.xyz"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {"Mohuishou\\ImageOCR\\": ""}
+    }
+}

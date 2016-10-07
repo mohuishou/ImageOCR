@@ -6,7 +6,8 @@
  * Time: 20:29
  */
 
-namespace ImageOCR;
+namespace Mohuishou\ImageOCR;
+
 class Image{
 
     //标准化的图像的宽高信息，可调
@@ -345,7 +346,6 @@ class Image{
         $res = [];
 
         //从数据库中取出特征值
-        require_once "StorageFile.php";
         $db=new StorageFile();
         $samples=$db->get();
 
