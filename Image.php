@@ -7,12 +7,22 @@
  */
 
 namespace Mohuishou\ImageOCR;
+use Mohuishou\ImageOCR\ImageConnect;
 
-class Image{
+class Image
+{
 
     //标准化的图像的宽高信息，可调
     const HASH_W = 10;
     const HASH_H = 10;
+
+    //灰度图像的阈值
+    const MAX_GREY=80;
+    const MIN_GREY=0;
+
+    //每个字符的平均宽度
+
+    //字符的最大宽度
 
     //图像字符串的个数
     const CHAR_NUM=4;
@@ -20,6 +30,8 @@ class Image{
     //图像的宽度与高度信息
     protected $_image_w;
     protected $_image_y;
+
+    protected $_img_type=["jpg","jpeg","gif","png","wbmp"];
 
     /**
      * 输入图像的句柄
@@ -31,7 +43,6 @@ class Image{
      * @var array $_hash_data 二值化的数组
      */
     protected $_hash_data;
-
 
 
     public function __construct($imgPath) {
@@ -74,25 +85,38 @@ class Image{
             for ($j = 0; $j < $this->_image_w; $j++) {
                 $rgb = imagecolorat($this->_in_img,$j,$i);
                 $rgb_array = imagecolorsforindex($this->_in_img, $rgb);
-                if($rgb_array['red']<190&&$rgb_array['green']<190&&$rgb_array['blue']<190){
-
+                //图片灰度化
+                $grey=(0.299*$rgb_array['red']+0.587*$rgb_array['green']+0.114*$rgb_array['blue'])/2;
+                if($grey>self::MIN_GREY&&$grey<self::MAX_GREY){
                     $data[$i][$j]=1;
                 }else{
-
                     $data[$i][$j]=0;
                 }
+                // echo $grey;
+                // if($rgb_array['red']<190&&$rgb_array['green']<190&&$rgb_array['blue']<190){
+                //     $data[$i][$j]=1;
+                // }else{
+                //     $data[$i][$j]=0;
+                // }
             }
 
         }
+        // print_r($data);
+$this->draw($data);
+        // $data=$this->removeHotSpots($data);
+        // $img_con=new ImageConnect($data);
+        // $data=$img_con->removeHotSpot();
+        // print_r($data);
+        // $this->draw($data);
+        return;
 
-
         $data=$this->removeHotSpots($data);
         $data=$this->removeHotSpots($data);
-        $data=$this->removeHotSpots($data);
+        // $data=$this->removeHotSpots($data);
         $this->_hash_data=$this->removeHotSpots($data);
-        $this->removeZero();
+        // $this->removeZero();
 
-//        $this->draw();
+       $this->draw($this->_hash_data);
 
 
     }
@@ -147,6 +171,8 @@ class Image{
 
         return $count<4;
     }
+
+
 
 
     /**
@@ -237,11 +263,6 @@ class Image{
         }
 //        imagepng($hash_img,'./test1.png');
         return $hash_img_data;
-
-
-
-
-
     }
 
     /**

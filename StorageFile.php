@@ -18,7 +18,7 @@ class StorageFile{
     const FILE_PATH=self::FILE_DIR."db.json";
 
     /**
-     * @var
+     *  数据保存相关
      */
     protected $_db;
 

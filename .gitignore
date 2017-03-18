@@ -2,3 +2,5 @@
 old/
 .idea/
 vendor/
+composer.lock
+.*/
