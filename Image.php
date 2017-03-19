@@ -13,8 +13,8 @@ class Image
 {
     
     //标准化的图像的宽高信息，可调
-    const HASH_W = 10;
-    const HASH_H = 10;
+    const HASH_W = 12;
+    const HASH_H = 20;
     
     //灰度图像的阈值
     const MAX_GREY=95;
@@ -71,23 +71,18 @@ class Image
         //获取图像的大小信息
         $this->_image_w=getimagesize($imgPath)[0];
         $this->_image_h=getimagesize($imgPath)[1];
-        
-        $data=$this->rgb2grey();
-        $bg=$this->getBgGrey($data);
-        if($bg>self::MAX_GREY){
-            $bg=self::MAX_GREY;
-        }
-        $this->imageHash($data,$bg);
-        
     }
 
     /**
-    * 二值化，排除背景色，雪花等干扰项
-    * @author mohuishou<1@lailin.xyz>
-    */
-    public function imageHash($grey_data,$max=null,$min=null){
-        $max==null && self::MAX_GREY;
-        $min==null && self::MIN_GREY;
+     * 二值化，排除背景色，雪花等干扰项
+     * @param array $grey_data 灰度图像
+     * @param int $max 最大阈值
+     * @param int $min 最小阈值
+     * @author mohuishou<1@lailin.xyz>
+     * @return array $data 二值化值
+     */
+    public function imageHash($grey_data,$max=self::MAX_GREY,$min=self::MIN_GREY){
+        $data=[];
         for($i = 0; $i < count($grey_data); $i++) {
             for ($j = 0; $j < count($grey_data[0]);$j++) {
                 $grey=$grey_data[$i][$j];
@@ -98,30 +93,8 @@ class Image
                 }
             }
         }
-//         print_r($data);
-//        $this->draw($data);
-//        $data=$this->removeZeroColumn($data);
-//        $this->draw($data);
-//        $data=$this->removeHotSpots($data);
-        $img_con=new ImageConnect($data);
-//        $data=$img_con->removeHotSpot();
-        $res=$img_con->split();
-        foreach ($res as $v){
-            $this->draw($v);
-            echo "<br />";
-        }
-//        $data=$this->removeZeroColumn($data);
-//        $data=$this->removeZero($data);
-//        $this->draw($data);
-        return;
-        
-        $data=$this->removeHotSpots($data);
-        $data=$this->removeHotSpots($data);
-        // $data=$this->removeHotSpots($data);
-        $this->_hash_data=$this->removeHotSpots($data);
-        // $this->removeZero();
-        
-//        $this->draw($this->_hash_data);
+        $this->_hash_data=$data;
+        return $data;
     }
 
     /**
@@ -154,14 +127,14 @@ class Image
         $tmp=[];
         foreach($data as $v){
             $a=array_count_values($v);
-            $maxa=max($a);
-            $k=array_keys($a, $maxa);
+            $max_a=max($a);
+            $k=array_keys($a, $max_a);
             if(!empty($k)){
                 if(isset($tmp[$k[0]])){
-                    $tmp[$k[0]]+=$maxa;
+                    $tmp[$k[0]]+=$max_a;
                     
                 }else{
-                    $tmp[$k[0]]=$maxa;
+                    $tmp[$k[0]]=$max_a;
                 }
             }
         }
@@ -186,7 +159,7 @@ class Image
     }
 
     /**
-    * 判断是否是噪点
+    * 判断是否是孤立点
     * @author mohuishou<1@lailin.xyz>
     * @param $i
     * @param $j
@@ -219,9 +192,6 @@ class Image
         return $count<4;
     }
 
-
-
-
     /**
     * 去除零行
     * @author mohuishou<1@lailin.xyz>
@@ -234,48 +204,6 @@ class Image
             if (implode("", $v) == 0) unset($data[$k]);
         }
         return $data;
-    }
-
-    /**
-     * 去除零列
-     * @param null $hash_data
-     * @author mohuishou<1@lailin.xyz>
-     * @return array
-     */
-    public function removeZeroColumn($hash_data=null){
-        $hash_data==null && $hash_data=$this->_hash_data;
-        $data=[];
-        for ($i=0;$i<count($hash_data[0]);$i++){
-            $column=array_column($hash_data,$i);
-            if(implode("",$column)!=0){
-                $data[]=$column;
-            }
-        }
-        $res_data=[];
-        for ($i=0;$i<count($data[0]);$i++){
-            $column=array_column($data,$i);
-            $res_data[]=$column;
-        }
-        return $res_data;
-    }
-
-    /**
-    * 用点阵的形式画出验证码图像，一般用于debug
-    * @author mohuishou<1@lailin.xyz>
-    * @param null $data
-    */
-    public function draw($data=null){
-        $data==null && $data=$this->_hash_data;
-        foreach ($data as $v){
-            foreach ($v as $val){
-                if($val){
-                    echo "<span style='color: #333;'>&#x2022;</span>";
-                }else{
-                    echo "<span style='color: #eee;'>&#x2022;</span>";
-                }
-            }
-            echo "<br />";
-        }
     }
 
     /**
@@ -313,8 +241,6 @@ class Image
         
         
         
-        //        imagepng($out_img,'./test.png');
-        
         //图像标准化
         $hash_img=$this->imageStandard($out_img,$out_img_w,$out_img_h);
         
@@ -330,8 +256,70 @@ class Image
                 }
             }
         }
-        //        imagepng($hash_img,'./test1.png');
         return $hash_img_data;
+    }
+
+
+    /**
+     * 标准化，返回标准化之后的二值数组
+     * @param array $hash_data 尚未标准化的二值数组
+     * @param int $angle 旋转角度，默认30度
+     * @param int $width 标准化图像宽度
+     * @param int $height 标准化图像高度
+     * @author mohuishou<1@lailin.xyz>
+     * @return array $standard_data 标准化之后的二值数组
+     */
+    public function standard($hash_data,$angle=30,$width=self::HASH_W,$height=self::HASH_H){
+        //hash 转 img
+        $img=ImageTool::hash2img($hash_data,2);
+
+        //图片旋转，取最小的字符宽度
+        //最小的宽度
+        $min_w=999;
+        $out_hash_data=[];
+        $white=imagecolorallocate($img, 255, 255, 255);
+        for($i=-$angle;$i<$angle;$i++){
+            $tmp_img=imagerotate($img,$i,$white);
+            //计算字符宽度
+            $tmp_img_hash_data=$this->imgTranspose($tmp_img);
+            $w=count($tmp_img_hash_data);
+            if($w<$min_w) {
+                $out_hash_data = $tmp_img_hash_data;
+                $min_w = $w;
+            }
+        }
+
+        $out_hash_data=ImageTool::hashTranspose($out_hash_data);
+
+        //最小宽度字符的高度与宽度
+        $out_img_w=count($out_hash_data[0]);
+        $out_img_h=count($out_hash_data);
+
+        //最小字符图片
+        $out_img=ImageTool::hash2img($out_hash_data);
+
+        //图像标准化，宽度和高度进行标准化
+        $standard_img = imagecreatetruecolor($width, $height);
+        imagecopyresized($standard_img, $out_img, 0, 0, 0, 0,$width,$height,$out_img_w,$out_img_h);
+
+
+        return ImageTool::img2hash($standard_img);
+    }
+
+    /**
+     * 图像去除零行、零列、转置之后的二值数组
+     * @param resource $img 图像资源句柄
+     * @author mohuishou<1@lailin.xyz>
+     * @return array
+     */
+    public function imgTranspose($img){
+        $hash_data=ImageTool::img2hash($img);
+
+        $hash_data=ImageTool::removeZero($hash_data);
+
+        $hash_data=ImageTool::transposeAndRemoveZero($hash_data);
+
+        return $hash_data;
     }
 
     /**
@@ -343,18 +331,17 @@ class Image
     public function imageStandard($img){
         $min_w=999;
         $oimg=$img;
-        
+
         $c=imagecolorallocate($img, 255, 255, 255);
         for($i=-30;$i<30;$i++){
             $simg=imagerotate($img,$i,$c);
-            //            //计算字符宽度
+            //计算字符宽度
             $simg_hash_data=$this->getWidth($simg);
             $w=count($simg_hash_data);
-            if($w<$min_w){
-                $oimg_hash_data=$simg_hash_data;
-                $min_w=$w;
+            if($w<$min_w) {
+                $oimg_hash_data = $simg_hash_data;
+                $min_w = $w;
             }
-            
         }
         
         $out_img_w=count($oimg_hash_data);
@@ -374,9 +361,7 @@ class Image
             }
         }
         
-        //        imagepng($out_img,'./0.png');
-        
-        
+
         $hash_img = imagecreatetruecolor(self::HASH_W, self::HASH_H);
         imagecopyresized($hash_img, $out_img, 0, 0, 0, 0, self::HASH_W,self::HASH_H,$out_img_w,$out_img_h);
         
@@ -418,12 +403,8 @@ class Image
                 $data1[]=$column;
             }
         }
-        
-        
         //返回
         return $data1;
-        
-        
     }
 
 
