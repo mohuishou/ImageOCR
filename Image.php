@@ -19,20 +19,14 @@ class Image
     //灰度图像的阈值
     const MAX_GREY=95;
     const MIN_GREY=0;
-    
-    //每个字符的平均宽度
-    
-    //字符的最大宽度
-    
+
     //图像字符串的个数
     const CHAR_NUM=4;
     
     //图像的宽度与高度信息
-    protected $_image_w;
-    protected $_image_y;
-    
-    protected $_img_type=["jpg","jpeg","gif","png","wbmp"];
-    
+    private $_image_w;
+    private $_image_h;
+
     /**
     * 输入图像的句柄
     * @var resource
@@ -42,7 +36,7 @@ class Image
     /**
     * @var array $_hash_data 二值化的数组
     */
-    protected $_hash_data;
+    private $_hash_data;
     
     
     public function __construct($imgPath) {
@@ -321,92 +315,6 @@ class Image
 
         return $hash_data;
     }
-
-    /**
-    * 图像标准化，将旋转的图像标准化
-    * @author mohuishou<1@lailin.xyz>
-    * @param $img
-    * @return resource 标准的图像资源句柄
-    */
-    public function imageStandard($img){
-        $min_w=999;
-        $oimg=$img;
-
-        $c=imagecolorallocate($img, 255, 255, 255);
-        for($i=-30;$i<30;$i++){
-            $simg=imagerotate($img,$i,$c);
-            //计算字符宽度
-            $simg_hash_data=$this->getWidth($simg);
-            $w=count($simg_hash_data);
-            if($w<$min_w) {
-                $oimg_hash_data = $simg_hash_data;
-                $min_w = $w;
-            }
-        }
-        
-        $out_img_w=count($oimg_hash_data);
-        $out_img_h=count($oimg_hash_data[0]);
-        
-        $out_img = imagecreatetruecolor($out_img_w,$out_img_h);//创建一幅真彩色图像
-        $bg=imagecolorallocate($out_img, 255, 255, 255);//背景色画为白色
-        imagefill($out_img, 0,0, $bg);
-        
-        //一列一列的进行画图
-        foreach ($oimg_hash_data as $k=>$v){
-            foreach ($v as $key=> $val){
-                $color=255;
-                if($val) $color=0;
-                $c = imagecolorallocate($out_img, $color, $color, $color);
-                imagesetpixel($out_img, $k,$key, $c);
-            }
-        }
-        
-
-        $hash_img = imagecreatetruecolor(self::HASH_W, self::HASH_H);
-        imagecopyresized($hash_img, $out_img, 0, 0, 0, 0, self::HASH_W,self::HASH_H,$out_img_w,$out_img_h);
-        
-        
-        return $hash_img;
-        
-    }
-
-    /**
-    * 获取图像的宽度
-    * @author mohuishou<1@lailin.xyz>
-    * @param $img 图像资源句柄
-    * @return int
-    */
-    public function getWidth($img){
-        //根据资源句柄获取整个图像的高与宽
-        $img_w=imagesx($img);
-        $img_h=imagesy($img);
-        
-        //图像二值化
-        for($i = 0; $i <$img_h; $i++) {
-            for ($j = 0; $j <$img_w; $j++) {
-                $rgb = imagecolorat($img,$j,$i);
-                if($rgb==0){
-                    $data[$i][$j]=1;
-                }else{
-                    $data[$i][$j]=0;
-                }
-            }
-        }
-        
-        //去掉零行
-        $data=$this->removeZero($data);
-        
-        //按列取图像获取宽度
-        for($i=0;$i<$img_w;$i++){
-            $column=array_column($data,$i);
-            if(implode("",$column)!=0){
-                $data1[]=$column;
-            }
-        }
-        //返回
-        return $data1;
-    }
-
 
     /**
     * 识别字符串
