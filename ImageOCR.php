@@ -18,6 +18,7 @@ class ImageOCR{
 
     private $standard_data=[];
 
+
     public function __construct(Image $image,$max_grey=0)
     {
         //灰度化
