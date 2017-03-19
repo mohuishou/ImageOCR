@@ -19,7 +19,7 @@ class ImageConnect
      * 字符区域的最小值
      * @var integer
      */
-    const MIN=30;
+    const MIN=40;
 
     private $_len_w;
     private $_len_h;
@@ -56,11 +56,48 @@ class ImageConnect
 
     /**
      * 字符区块分割
-     * @return void
-     * @author mohushou<1@lailin.xyz>
+     * @author mohuishou<1@lailin.xyz>
+     * @return array
      */
     public function split(){
+        $strs=[];
+        $str_data=[];
 
+        //找到需要保存的字符区块
+        foreach ($this->_tags as $key => $value) {
+            if ($value>self::MIN) {
+                $strs[]=$key;
+            }
+        }
+
+        //遍历找到需要的字符区块
+        foreach ($strs as $k=>$v){
+            $str_data[$k]=[];
+            foreach ($this->_hash_data as $i=>$value){
+                foreach ($value as $j=>$val) {
+                    if ($val == $v){
+                        $str_data[$k][$i][$j]=1;
+                    }else{
+                        $str_data[$k][$i][$j]=0;
+                    }
+                }
+            }
+        }
+
+        //去除零行零列
+        foreach ($str_data as $k=>$v){
+
+            //去除零列
+            $str_data[$k]=ImageTool::removeZeroColumn($v);
+
+            //去除零行
+            $str_data[$k]=ImageTool::removeZero($str_data[$k]);
+
+            //重建索引
+            $str_data[$k]=array_values($str_data[$k]);
+        }
+
+        return $str_data;
     }
 
     /**
@@ -103,8 +140,8 @@ class ImageConnect
         // }
         // return;
         $tag=self::TAG;
-        for ($i=0; $i < $this->_len_h-1; $i++) {
-            for ($j=0; $j < $this->_len_w-1; $j++) {
+        for ($i=0; $i < $this->_len_h; $i++) {
+            for ($j=0; $j < $this->_len_w; $j++) {
                 if ($data[$i][$j]>0&&$data[$i][$j]<self::TAG) {
                     $tag++;
                     $data[$i][$j]=$tag;
@@ -128,17 +165,17 @@ class ImageConnect
     public function connectPoint($i, $j,$tag)
     {
         if($i == 0 || $j == 0 || $i == ($this->_len_h - 1) || $j == ($this->_len_w - 1)) return true;
-        // $count=0;
-        // for ($m=-1; $m < 2; $m++) {
-        //     for ($n=-1; $n < 2; $n++) {
-        //         if ($this->_hash_data[$i+$m][$j+$n]>0&&$this->_hash_data[$i+$m][$j+$n]<self::TAG){
-        //             $count++;
-        //         }
-        //     }
-        // }
-        // if ($count<1) {
-        //     return;
-        // }
+        $count=0;
+        for ($m=-1; $m < 2; $m++) {
+            for ($n=-1; $n < 2; $n++) {
+                if ($this->_hash_data[$i+$m][$j+$n]>0&&$this->_hash_data[$i+$m][$j+$n]<self::TAG){
+                    $count++;
+                }
+            }
+        }
+        if ($count<2) {
+            return;
+        }
         for ($m=-1; $m < 2; $m++) {
             for ($n=-1; $n < 2; $n++) {
                 if ($this->_hash_data[$i+$m][$j+$n]>0&&$this->_hash_data[$i+$m][$j+$n]<self::TAG) {
