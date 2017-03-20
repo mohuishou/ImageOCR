@@ -7,18 +7,38 @@
 */
 
 namespace Mohuishou\ImageOCR;
-use Mohuishou\ImageOCR\ImageConnect;
 
 class Image
 {
+
+    /**
+     * 最大灰度值
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
+    public $max_grey=0;
+
+    /**
+     * 最小灰度值
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
+    public $min_grey=0;
+
+    /**
+     * 标准化图像的宽度
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
+    public $standard_width=10;
+
+    /**
+     * 标准化图像的高度
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
+    public $standard_height=10;
     
-    //标准化的图像的宽高信息，可调
-    const HASH_W = 12;
-    const HASH_H = 20;
-    
-    //灰度图像的阈值
-    const MAX_GREY=95;
-    const MIN_GREY=0;
 
     //图像字符串的个数
     const CHAR_NUM=4;
@@ -31,7 +51,7 @@ class Image
     * 输入图像的句柄
     * @var resource
     */
-    public $_in_img;
+    public $in_img;
     
     /**
     * @var array $_hash_data 二值化的数组
@@ -46,16 +66,16 @@ class Image
         
         switch($res) {
             case 1:
-                $this->_in_img = ImageCreateFromGif($imgPath);
+                $this->in_img = imagecreatefromgif($imgPath);
                 break;
             case 2:
-                $this->_in_img = ImageCreateFromJpeg($imgPath);
+                $this->in_img = imagecreatefromjpeg($imgPath);
                 break;
             case 3:
-                $this->_in_img = ImageCreateFromPng($imgPath);
+                $this->in_img = imagecreatefrompng($imgPath);
                 break;
             case 6:
-                $this->_in_img = ImageCreateFromWbmp($imgPath);
+                $this->in_img = imagecreatefromwbmp($imgPath);
                 break;
             default:
                 throw new \Exception("不支持的图片格式!");
@@ -75,7 +95,12 @@ class Image
      * @author mohuishou<1@lailin.xyz>
      * @return array $data 二值化值
      */
-    public function imageHash($grey_data,$max=self::MAX_GREY,$min=self::MIN_GREY){
+    public function imageHash($grey_data,$max=null,$min=null){
+
+        //初始化二值化的阈值
+        $max==null && $max=$this->max_grey;
+        $min==null && $min=$this->min_grey;
+
         $data=[];
         for($i = 0; $i < count($grey_data); $i++) {
             for ($j = 0; $j < count($grey_data[0]);$j++) {
@@ -101,8 +126,8 @@ class Image
         $data=[];
         for($i = 0; $i < $this->_image_h; $i++) {
             for ($j = 0; $j < $this->_image_w; $j++) {
-                $rgb = imagecolorat($this->_in_img,$j,$i);
-                $rgb_array = imagecolorsforindex($this->_in_img, $rgb);
+                $rgb = imagecolorat($this->in_img,$j,$i);
+                $rgb_array = imagecolorsforindex($this->in_img, $rgb);
                 //图片灰度化
                 $data[$i][$j]=intval((0.299*$rgb_array['red']+0.587*$rgb_array['green']+0.114*$rgb_array['blue'])/2);
             }
@@ -201,12 +226,12 @@ class Image
     }
 
     /**
-    * 分割图片，并将其标准化
+    * 等宽分割
     * @author mohuishou<1@lailin.xyz>
     * @param int $n 图片的第几个字符
     * @return array $hash_data 标准化之后的二值化图像字符串
     */
-    public function splitImage($n){
+    public function splitByEqualWidth($n){
         $data=[];
         $a=$this->_image_w/self::CHAR_NUM;
         for($i=$n*$a;$i<($n+1)*$a;$i++){
@@ -215,42 +240,6 @@ class Image
                 $data[]=$column;
             }
         }
-        
-        $out_img_w=count($data)+4;
-        $out_img_h=count($data[0])+4;
-        
-        $out_img = imagecreatetruecolor($out_img_w,$out_img_h);//创建一幅真彩色图像
-        $bg=imagecolorallocate($out_img, 255, 255, 255);//背景色画为白色
-        imagefill($out_img, 0,0, $bg);
-        
-        //一列一列的进行画图
-        foreach ($data as $k=>$v){
-            foreach ($v as $key=> $val){
-                $color=255;
-                if($val) $color=0;
-                $c = imagecolorallocate($out_img, $color, $color, $color);
-                imagesetpixel($out_img, $k+2,$key+2, $c);
-            }
-        }
-        
-        
-        
-        //图像标准化
-        $hash_img=$this->imageStandard($out_img,$out_img_w,$out_img_h);
-        
-        //图像二值化
-        for($i = 0; $i <self::HASH_H; $i++) {
-            for ($j = 0; $j <self::HASH_H; $j++) {
-                $rgb = imagecolorat($hash_img,$j,$i);
-                //                echo $rgb."\n";
-                if($rgb<10000000){
-                    $hash_img_data[]=1;
-                }else{
-                    $hash_img_data[]=0;
-                }
-            }
-        }
-        return $hash_img_data;
     }
 
 
@@ -263,7 +252,11 @@ class Image
      * @author mohuishou<1@lailin.xyz>
      * @return array $standard_data 标准化之后的二值数组
      */
-    public function standard($hash_data,$angle=30,$width=self::HASH_W,$height=self::HASH_H){
+    public function standard($hash_data,$angle=30,$width=null,$height=null){
+        //初始化标准化图像的相关设置
+        $width==null && $width=$this->standard_width;
+        $height==null && $height=$this->standard_height;
+
         //hash 转 img
         $img=ImageTool::hash2img($hash_data,2);
 
@@ -316,66 +309,4 @@ class Image
         return $hash_data;
     }
 
-    /**
-    * 识别字符串
-    * @author mohuishou<1@lailin.xyz>
-    * @return array $res 识别成功的字符串数组
-    */
-    public function find() {
-        $res = [];
-        
-        //从数据库中取出特征值
-        $db=new StorageFile();
-        $samples=$db->get();
-        
-        //分割字符串，并和特征值进行对比
-        for($i = 0; $i < self::CHAR_NUM; $i++) {
-            $hash= $this->splitImage($i);
-            $res[]=$this->compare($hash,$samples);
-        }
-        
-        return $res;
-    }
-
-    /**
-    * 和特征值库进行对比
-    * @author mohuishou<1@lailin.xyz>
-    * @param array $hash 待识别的二值化图像字符串
-    * @param array $samples 特征值库的数组
-    * @return string $code 返回识别的字符
-    */
-    public function compare($hash,$samples) {
-        
-        
-        $s = 0;
-        foreach ($samples as $k=>$v){
-            foreach ($v as $val){
-                $samples_hash_data=str_split($val);
-                $c = count( array_intersect_assoc ($samples_hash_data, $hash) );
-                if($c>$s){
-                    $s=$c;
-                    $code=$k;
-                }
-                if($s>0.99*count($samples_hash_data)){
-                    //                    echo 0.8*count($samples_hash_data);
-                    return $k;
-                }
-            }
-        }
-        //        foreach($samples as $value) {
-        //            $samples_hash_data=str_split($value['hash_data']);
-        //            $c = count( array_intersect_assoc ($samples_hash_data, $hash) );
-        //            if($c>$s){
-        //                $s=$c;
-        //                $code=$value['code'];
-        //            }
-        //            if($s>0.8*count($samples_hash_data)){
-        //                echo 0.8*count($samples_hash_data);
-        //                return $value['code'];
-        //
-        //                break;
-        //            }
-        //        }
-        return $code;
-    }
 }

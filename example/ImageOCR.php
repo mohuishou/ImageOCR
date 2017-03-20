@@ -25,7 +25,7 @@ class ImageOCR extends BaseOCR{
         //背景图像灰度值
         $bg=$image->getBgGrey($grey_data);
 
-        $max_grey==0 && $max_grey=$image::MAX_GREY;
+//        $max_grey==0 && $max_grey=$image::MAX_GREY;
 
         //二值化
         if($bg>$max_grey){

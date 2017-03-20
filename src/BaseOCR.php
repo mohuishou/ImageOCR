@@ -25,35 +25,15 @@ abstract class BaseOCR{
     protected $standard_data=[];
 
     /**
-     * 最大灰度值
-     * @var int
+     * @var Image
      * @author mohuishou<1@lailin.xyz>
      */
-    protected $max_grey=0;
-
-    /**
-     * 最小灰度值
-     * @var int
-     * @author mohuishou<1@lailin.xyz>
-     */
-    protected $min_grey=0;
-
-    /**
-     * 标准化图像的宽度
-     * @var int
-     * @author mohuishou<1@lailin.xyz>
-     */
-    protected $standard_width=10;
-
-    /**
-     * 标准化图像的高度
-     * @var int
-     * @author mohuishou<1@lailin.xyz>
-     */
-    protected $standard_height=10;
+    protected $image;
 
     /**
      * 对象初始化，需要分割得到标准化数组
+     * 在构造函数内，需要设置 $this->standard_data & $this->image
+     * 详细实现可以参见example文件夹内的函数类
      * BaseOCR constructor.
      * @param Image $image
      */
@@ -73,6 +53,7 @@ abstract class BaseOCR{
      */
     abstract public function study();
 
+
     /**
      * 获取标准化的二值化数组
      * @author mohuishou<1@lailin.xyz>
@@ -81,4 +62,41 @@ abstract class BaseOCR{
     public function getHashData(){
         return $this->standard_data;
     }
+
+    /**
+     * @param $max_grey
+     * @author mohuishou<1@lailin.xyz>
+     * @return mixed
+     */
+    public function setMaxGrey($max_grey){
+        return $this->image->max_grey=$max_grey;
+    }
+
+    /**
+     * @param $min_grey
+     * @author mohuishou<1@lailin.xyz>
+     * @return mixed
+     */
+    public function setMinGrey($min_grey){
+        return $this->image->min_grey=$min_grey;
+    }
+
+    /**
+     * @param $standard_width
+     * @author mohuishou<1@lailin.xyz>
+     * @return mixed
+     */
+    public function setStandardWidth($standard_width){
+        return $this->image->standard_width=$standard_width;
+    }
+
+    /**
+     * @param $standard_height
+     * @author mohuishou<1@lailin.xyz>
+     * @return mixed
+     */
+    public function setStandardHeight($standard_height){
+        return $this->image->standard_height=$standard_height;
+    }
 }
+

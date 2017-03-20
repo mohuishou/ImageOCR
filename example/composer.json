@@ -10,6 +10,8 @@
         }
     ],
     "require": {
-        "mohuishou/image-ocr": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {"Mohuishou\\ImageOCR\\": "../src/"}
     }
 }
