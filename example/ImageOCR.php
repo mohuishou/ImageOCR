@@ -14,7 +14,7 @@ namespace Mohuishou\ImageOCR;
  * @author mohuishou<1@lailin.xyz>
  * @package Mohuishou\ImageOCR
  */
-class ImageOCR extends BaseOCR{
+class ImageOCR {
 
 
     public function __construct(Image $image,$max_grey=0)

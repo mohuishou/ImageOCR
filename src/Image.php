@@ -16,14 +16,14 @@ class Image
      * @var int
      * @author mohuishou<1@lailin.xyz>
      */
-    public $max_grey=0;
+    public $max_grey=null;
 
     /**
      * 最小灰度值
      * @var int
      * @author mohuishou<1@lailin.xyz>
      */
-    public $min_grey=0;
+    public $min_grey=null;
 
     /**
      * 标准化图像的宽度
@@ -92,14 +92,22 @@ class Image
      * @param array $grey_data 灰度图像
      * @param int $max 最大阈值
      * @param int $min 最小阈值
+     * @throws \Exception
      * @author mohuishou<1@lailin.xyz>
      * @return array $data 二值化值
      */
-    public function imageHash($grey_data,$max=null,$min=null){
+    public function imageHash($grey_data,$max,$min){
 
-        //初始化二值化的阈值
+        if ($grey_data==null)
+            throw new \Exception("请先将图片灰度化！",1);
+
         $max==null && $max=$this->max_grey;
+        if ($max==null)
+            throw new \Exception("请输入最大灰度值！",1);
+
         $min==null && $min=$this->min_grey;
+        if ($min==null)
+            throw new \Exception("请输入最小灰度值！",1);
 
         $data=[];
         for($i = 0; $i < count($grey_data); $i++) {
