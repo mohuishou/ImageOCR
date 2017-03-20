@@ -1,0 +1,6 @@
+*.png
+old/
+.idea/
+vendor/
+composer.lock
+.*/

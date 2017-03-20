@@ -14,9 +14,7 @@ namespace Mohuishou\ImageOCR;
  * @author mohuishou<1@lailin.xyz>
  * @package Mohuishou\ImageOCR
  */
-class ImageOCR{
-
-    private $standard_data=[];
+class ImageOCR extends BaseOCR{
 
 
     public function __construct(Image $image,$max_grey=0)
@@ -43,15 +41,6 @@ class ImageOCR{
         foreach ($res as $v){
             $this->standard_data[]=$image->standard($v);
         }
-    }
-
-    /**
-     * 获取标准化的二值化数组
-     * @author mohuishou<1@lailin.xyz>
-     * @return array
-     */
-    public function getHashData(){
-        return $this->standard_data;
     }
 
     /**

@@ -1,0 +1,15 @@
+{
+    "name": "mohuishou/imageocr-example",
+    "description": "the example for mohuishou/imageocr",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mohuishou",
+            "email": "1@lailin.xyz"
+        }
+    ],
+    "require": {
+        "mohuishou/image-ocr": "dev-master"
+    }
+}
