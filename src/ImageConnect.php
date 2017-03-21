@@ -105,7 +105,7 @@ class ImageConnect
      * @return array $hash_data 去噪之后的数组
      * @author mohushou<1@lailin.xyz>
      */
-    public function removeHotSpot(){
+    public function removeHotSpots(){
         $remove=[];
         foreach ($this->_tags as $key => $value) {
             if ($value<self::MIN) {
