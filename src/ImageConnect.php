@@ -135,10 +135,6 @@ class ImageConnect
     public function addTag()
     {
         $data=&$this->_hash_data;
-        // foreach ($data as $key => $value) {
-        //     echo count($value)."\n";
-        // }
-        // return;
         $tag=self::TAG;
         for ($i=0; $i < $this->_len_h; $i++) {
             for ($j=0; $j < $this->_len_w; $j++) {
