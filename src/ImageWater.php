@@ -28,6 +28,10 @@ class ImageWater{
 
     protected $avg_len;
 
+    protected $right_flag=0;
+
+    const Tag=100;
+
 
     public function __construct($hash_data)
     {
@@ -39,6 +43,88 @@ class ImageWater{
      * @author mohuishou<1@lailin.xyz>
      */
     public function water($sp){
+        $hash_data=$this->hash_data;
+        $len_w=count(current($hash_data));
+        $len_h=count($hash_data);
+
+        //添加分割线
+        $tag=self::Tag;
+        foreach ($sp as $j){
+            $x=0;
+            $y=$j;
+            $hash_data[$x][$y]=$tag;
+            while ($x<$len_h && $y<$len_w){
+                list($x,$y)=$this->getWaterStatus($x,$y);
+                //避免无限向右滚动
+                $y=min($j,$y);
+                $hash_data[$x][$y]=$tag;
+            }
+            $tag++;
+        }
+    }
+
+    /**
+     * 获取水滴状态
+     * @param $i
+     * @param $j
+     * @author mohuishou<1@lailin.xyz>
+     * @return array
+     */
+    public function getWaterStatus($i,$j){
+        $hash_data=$this->hash_data;
+        $n[1]=$hash_data[$i+1][$j-1];
+        $n[2]=$hash_data[$i+1][$j];
+        $n[3]=$hash_data[$i+1][$j+1];
+        $n[4]=$hash_data[$i][$j+1];
+        $n[5]=$hash_data[$i][$j-1];
+
+        //第一种情况，全黑\全白，下移
+        $count=0;
+        foreach ($n as $v){
+            if ($v==1){
+                $count++;
+            }
+        }
+        if ($count==0||$count==5){
+            $this->right_flag=0;
+            return [$i+1,$j];
+        }
+
+        //第二种情况
+        if ($count==4 && $n[1]==0){
+            $this->right_flag=0;
+            return [$i+1,$j-1];
+        }
+
+        //第三种情况
+        if ($n[1]==1 && $n[2]==0){
+            $this->right_flag=0;
+            return [$i+1,$j];
+        }
+
+        //第四种情况
+        if ($n[1]==1 && $n[2]==1 && $n[3]==0){
+            $this->right_flag=0;
+            return [$i+1,$j+1];
+        }
+
+        //第五种情况
+        if ($n[1]==1 && $n[2]==1 && $n[3]==1 && $n[4]==0){
+            $this->right_flag=1;
+            return [$i,$j+1];
+        }
+
+        //第六种情况
+        if ($count==4 && $n[5]==0){
+            //避免左右循环摆动，判断上一次是否右移，如果右移直接向下滴落
+            if ($this->right_flag){
+                $this->right_flag=0;
+                return [$i+1,$j];
+            }
+            return [$i,$j-1];
+        }
+
+        return [$i+1,$j];
 
     }
 
