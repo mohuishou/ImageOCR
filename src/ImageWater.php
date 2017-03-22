@@ -36,17 +36,45 @@ class ImageWater{
      */
     protected $min_points=[];
 
+    /**
+     * 单个字符最大宽度
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $max_len;
 
+    /**
+     * 单个字符最小宽度
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $min_len;
 
+    /**
+     * 单个字符平均宽度
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $avg_len;
 
+    /**
+     * 标记位
+     * @var int
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $right_flag=0;
 
+    /**
+     * 分割标记
+     */
     const Tag=100;
 
 
+    /**
+     * 初始化
+     * ImageWater constructor.
+     * @param $hash_data
+     */
     public function __construct($hash_data)
     {
         $this->hash_data=$hash_data;
