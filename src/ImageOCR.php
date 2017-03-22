@@ -58,6 +58,13 @@ class ImageOCR{
     protected $image_connect;
 
     /**
+     * 背景除噪的三种模式
+     */
+    const MAX_MODEL=1;
+    const MIN_MODEL=0;
+    const BG_MODEL=2;
+
+    /**
      * 对象初始化，需要分割得到标准化数组
      * 在构造函数内，需要设置 $this->standard_data & $this->image
      * BaseOCR constructor.
@@ -65,6 +72,15 @@ class ImageOCR{
      */
     public function __construct(Image $image){
         $this->image=$image;
+    }
+
+    /**
+     * 保存输入的图片
+     * @param string $path 需要保存的图片路径
+     * @author mohuishou<1@lailin.xyz>
+     */
+    public function saveImage($path){
+        imagepng($this->image->in_img,$path);
     }
 
     /**
@@ -90,29 +106,29 @@ class ImageOCR{
 
     /**
      * 二值化，背景动态阈值法
-     * @param int $model
-     * @param null|int $max_gray 最大灰度阈值
+     * @param int $model 0:最大灰度值模式，1：最小灰度值模式，2：唯一模式
+     * @param null|int $max_grey 最大灰度阈值
      * @param null|int $min_grey 最小灰度阈值
      * @author mohuishou<1@lailin.xyz>
      * @return array $hash_data 二值化图像数组
      * @throws \Exception
      */
-    public function hashByBackground($model=0,$max_gray=null,$min_grey=null){
+    public function hashByBackground($model=self::MAX_MODEL,$max_grey=null,$min_grey=null){
         $bg_grey=$this->image->getBgGrey($this->grey_data);
         switch ($model){
             case 0:
-                $max_gray=$bg_grey;
-                break;
-            case 1:
                 $min_grey=$bg_grey;
                 break;
+            case 1:
+                $max_grey=$bg_grey;
+                break;
             case 2:
-                $max_gray=$min_grey=$bg_grey;
+                $max_grey=$min_grey=$bg_grey;
                 break;
             default:
                 throw new \Exception("请选择正确模式！");
         }
-        return $this->hash($max_gray,$min_grey);
+        return $this->hash($max_grey,$min_grey);
     }
 
 
@@ -151,6 +167,7 @@ class ImageOCR{
 
     /**
      * 图像标准化
+     * @return array 标准化的数组对象，从左到右的顺序
      * @author mohuishou<1@lailin.xyz>
      * @throws \Exception
      */
@@ -161,7 +178,7 @@ class ImageOCR{
         foreach ($this->standard_data as $item) {
             $data[]=$this->image->standard($item);
         }
-        $this->standard_data=$data;
+        return $this->standard_data=$data;
     }
 
     /**

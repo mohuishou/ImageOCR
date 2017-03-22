@@ -5,7 +5,7 @@
  * Date: 2016/5/2 0002
  * Time: 12:51
  */
-namespace Mohuishou\ImageOCR;
+namespace Mohuishou\ImageOCR\Example;
 class StorageFile{
     /**
      * 储存文件目录

@@ -12,6 +12,10 @@
     "require": {
     },
     "autoload": {
-        "psr-4": {"Mohuishou\\ImageOCR\\": "../src/"}
+        "psr-4": {
+            "Mohuishou\\ImageOCR\\": "../src/",
+            "Mohuishou\\ImageOCR\\Example\\": "./"
+        }
+
     }
 }
