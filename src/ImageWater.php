@@ -16,10 +16,24 @@ namespace Mohuishou\ImageOCR;
  */
 class ImageWater{
 
+    /**
+     * 二值化数组
+     * @var array
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $hash_data=[];
 
+    /**
+     *
+     * @var array
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $data=[];
 
+    /**
+     * @var array
+     * @author mohuishou<1@lailin.xyz>
+     */
     protected $min_points=[];
 
     protected $max_len;
