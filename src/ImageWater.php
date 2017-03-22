@@ -39,8 +39,10 @@ class ImageWater{
     }
 
     /**
-     * @param $sp
+     * 滴水算法
+     * @param array $sp 分割点集合
      * @author mohuishou<1@lailin.xyz>
+     * @return array
      */
     public function water($sp){
         $hash_data=$this->hash_data;
@@ -61,6 +63,41 @@ class ImageWater{
             }
             $tag++;
         }
+
+        //分割
+        $data=[];
+        for ($i=self::Tag;$i<=$tag;$i++){
+            foreach ($hash_data as $x=>$v){
+                $flag=-1;
+                if ($i==self::Tag){
+                    $flag=1;
+                }
+                foreach ($v as $y=>$val){
+                    if ($flag>0){
+                        $data[][$x][$y]=$val;
+                    }else{
+                        $data[][$x][$y]=0;
+                    }
+                    if ($val==$tag||$val==$tag-1){
+                        $flag=-$flag;
+                    }
+                }
+            }
+        }
+
+        //格式化
+        foreach ($data as $k=> $v){
+            //去除零列
+            $data[$k]=ImageTool::removeZeroColumn($v);
+
+            //去除零行
+            $data[$k]=ImageTool::removeZero($data[$k]);
+
+            //重建索引
+            $data[$k]=array_values($data[$k]);
+        }
+
+        return $data;
     }
 
     /**
