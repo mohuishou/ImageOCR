@@ -120,9 +120,32 @@ TODO:待完善
 
 ## API
 
-#### ImageOCR
+```php
+ImageOCR::__construct(Image $image)
+ImageOCR::saveImage($path)
+ImageOCR::grey()
+ImageOCR::hash($max_grey=null,$min_grey=null)
+ImageOCR::hashByBackground($model=self::MAX_MODEL,$max_grey=null,$min_grey=null)
+ImageOCR::removeSpots()
+ImageOCR::removeSpotsByConnect()
+ImageOCR::standard()
+ImageOCR::setImageConnect()
+ImageOCR::setImage(Image $image)
+ImageOCR::getStandardData()
+ImageOCR::setMaxGrey($max_grey)
+ImageOCR::setMinGrey($min_grey)
+ImageOCR::setStandardWidth($standard_width)
+ImageOCR::setStandardHeight($standard_height)
 
-#### ImageTool
+//ImageTool的方法均为静态方法
+ImageTool::removeZero($data)
+ImageTool::removeZeroColumn($hash_data)
+ImageTool::drawBrowser($data)
+ImageTool::transposeAndRemoveZero($hash_data)
+ImageTool::hashTranspose($hash_data)
+ImageTool::img2hash($img)
+ImageTool::hash2img($hash_data,$padding=0)
+```
 
 ## CHANGELOG
 ### 0.2 [2017-4-1]
