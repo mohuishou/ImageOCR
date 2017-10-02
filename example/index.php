@@ -4,7 +4,7 @@ namespace Mohuishou\ImageOCR\Example;
 
 require_once 'vendor/autoload.php';
 $img_path=__DIR__."/img/inImgTemp.png";
-$code_path="./img/0.png";
+$code_path="https://cas.baidu.com/?action=image";
 $img=new \Mohuishou\ImageOCR\Example\OCR($code_path);
 
 $img->draw()

@@ -142,7 +142,7 @@ class OCR {
             $this->draw();
             exit(0);
         }
-        $db=new StorageFile();
+        $db=Storage::getInstance();
         foreach ($code_arr as $k=>$v){
             $db->add($v,$hash_data[$k]);
         }
