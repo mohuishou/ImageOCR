@@ -37,7 +37,7 @@ class OCR {
         $this->image_ocr->setStandardHeight(20);
     }
 
-    protected function standard(){
+    public function standard(){
         //避免重复调用
         if (!empty($this->standard_data)){
             return $this->standard_data;

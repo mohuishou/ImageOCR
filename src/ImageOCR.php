@@ -160,6 +160,10 @@ class ImageOCR{
         $this->standard_data=$this->image_connect->split();
     }
 
+    /**
+     * 滴水算法分割
+     * @author mohuishou<1@lailin.xyz>
+     */
     public function splitByWater(){
 
     }

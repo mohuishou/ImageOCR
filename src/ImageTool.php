@@ -60,9 +60,9 @@ class ImageTool{
         foreach ($data as $v){
             foreach ($v as $val){
                 if($val){
-                    echo "<span style='color: #333;'>&#x2022;</span>";
+                    echo "<span style='color: #333;font-family: Consolas, Monaco, monospace;'>&#x2022;</span>";
                 }else{
-                    echo "<span style='color: #eee;'>&#x2022;</span>";
+                    echo "<span style='color: #eee;font-family: Consolas, Monaco, monospace;'>&#x2022;</span>";
                 }
             }
             echo "<br />";

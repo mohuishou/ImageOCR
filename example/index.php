@@ -4,13 +4,20 @@ namespace Mohuishou\ImageOCR\Example;
 
 require_once 'vendor/autoload.php';
 $img_path=__DIR__."/img/inImgTemp.png";
-$code_path="http://www.169ol.com/Stream/Code/getCode";
-$ocr=new OCR($code_path);
-echo $ocr->ocr();
-$ocr->draw();
-$ocr->save($img_path);
+$code_path="./img/0.png";
+$img=new \Mohuishou\ImageOCR\Example\OCR($code_path);
+
+$img->draw()
+
+//第一步灰度化
+// $data=$img->grey();
+
+// //第二步二值化
+// $img->hashByBackground(ImageOCR::MAX_MODEL);
+
+// \Mohuishou\ImageOCR\ImageTool::drawBrowser($img->getStandardData());
 ?>
-<!doctype html>
+<!--<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,4 +29,4 @@ $ocr->save($img_path);
 <body>
 <img src="img/inImgTemp.png" alt="">
 </body>
-</html>
+</html>-->
