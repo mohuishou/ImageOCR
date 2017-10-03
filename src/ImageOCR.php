@@ -212,7 +212,6 @@ class ImageOCR{
      */
     public function setImageConnect(){
         $this->checkHashData();
-
         $this->image_connect=new ImageConnect($this->hash_data);
     }
 

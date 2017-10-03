@@ -7,18 +7,32 @@
  */
 namespace Mohuishou\ImageOCR\Example;
 
-require_once 'vendor/autoload.php';
-$img_path=__DIR__."/img/inImgTemp.png";
+use Minho\Captcha\CaptchaBuilder;
 
-if(isset($_POST['send'])&&$_POST['send']=="send"){
+require_once 'vendor/autoload.php';
+
+$img_path=__DIR__."/img/1.png";
+
+if (isset($_POST['send'])&&$_POST['send']=="send") {
     $ocr=new OCR($img_path);
     $ocr->study($_POST['code']);
     echo "<script>location.href='./study.php?t=".time()."'</script>";
     $ocr=null;
-}else{
-    $ocr = new OCR("http://www.169ol.com/Stream/Code/getCode");
-    $ocr->save($img_path);
-    $ocr=null;
+} else {
+    $captch = new CaptchaBuilder();
+    
+    $captch->initialize([
+        'width' => 150,     // 宽度
+        'height' => 50,     // 高度
+        'line' => false,    // 直线
+        'curve' => false,    // 曲线
+        'noise' => 0,       // 噪点背景
+        'fonts' => ["./fonts/num.ttf"]       // 字体
+    ]);
+    
+    $captch->create();
+    
+    $captch->save($img_path, 1);
 }
 
 ?>
@@ -30,7 +44,7 @@ if(isset($_POST['send'])&&$_POST['send']=="send"){
 </head>
 <body>
     <form action="" method="post">
-        <img src="img/inImgTemp.png">
+        <img src="img/1.png">
         <input type="text" name="code">
         <input name="send" type="submit" value="send" />
     </form>

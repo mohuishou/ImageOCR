@@ -1,23 +1,30 @@
 <?php
 
 namespace Mohuishou\ImageOCR\Example;
+use Minho\Captcha\CaptchaBuilder;
 
 require_once 'vendor/autoload.php';
-$img_path=__DIR__."/img/inImgTemp.png";
-$code_path="https://cas.baidu.com/?action=image";
-$img=new \Mohuishou\ImageOCR\Example\OCR($code_path);
 
-$img->draw()
+$captch = new CaptchaBuilder();
 
-//第一步灰度化
-// $data=$img->grey();
+$captch->initialize([
+    'width' => 150,     // 宽度
+    'height' => 50,     // 高度
+    'line' => false,    // 直线
+    'curve' => false,    // 曲线
+    'noise' => 0,       // 噪点背景
+    'fonts' => ["./fonts/num.ttf"]       // 字体
+]);
 
-// //第二步二值化
-// $img->hashByBackground(ImageOCR::MAX_MODEL);
+$captch->create();
+$img_path=__DIR__."/img/1.png";
+$captch->save($img_path,1);
 
-// \Mohuishou\ImageOCR\ImageTool::drawBrowser($img->getStandardData());
+$img=new \Mohuishou\ImageOCR\Example\OCR($img_path);
+
+echo "识别结果" . $img->ocr();
 ?>
-<!--<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,6 +34,6 @@ $img->draw()
     <title>Document</title>
 </head>
 <body>
-<img src="img/inImgTemp.png" alt="">
+<img src="img/1.png" alt="">
 </body>
-</html>-->
+</html>

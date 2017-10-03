@@ -137,7 +137,7 @@ class Image
                 $rgb = imagecolorat($this->in_img,$j,$i);
                 $rgb_array = imagecolorsforindex($this->in_img, $rgb);
                 //图片灰度化
-                $data[$i][$j]=intval((0.299*$rgb_array['red']+0.587*$rgb_array['green']+0.114*$rgb_array['blue'])/2);
+                $data[$i][$j]=intval(($rgb_array['red']+$rgb_array['green']+$rgb_array['blue'])/3);
             }
         }
         return $data;

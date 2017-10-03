@@ -1,7 +1,7 @@
 <?php
 
 namespace Mohuishou\ImageOCR\Example;
-use Medoo;
+use Medoo\Medoo;
 
 class Storage{
 
@@ -9,12 +9,10 @@ class Storage{
 
     private $_database;
 
-    const ROOT = __DIR__;
-
     private function __construct() {
-        $this->_database = new medoo([
+        $this->_database = new Medoo([
             'database_type' => 'sqlite',
-            'database_file' => ROOT . '/db/database.db'
+            'database_file' => __DIR__ . '/db/db.db'
         ]);
     }
 
@@ -32,16 +30,13 @@ class Storage{
     public function add($code,$hash){
         $this->_database->insert("ocr",[
             "code" => $code,
-            "hash" => $hash,
-            "created_at" => time(),
-            "updated_at" => time()
+            "hash" => implode("",$hash)
         ]);
     }
 
-    public function get($code){
-        return $this->_database->select("ocr",[
-            "code" => $code
-        ]);
+    public function get($code = null){
+        $arr = null && $code && $arr = ["code" => $code];
+        return $this->_database->select("ocr",["hash","code"]);
     }
     
 }

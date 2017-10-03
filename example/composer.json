@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "catfan/Medoo": "^1.4"
+        "catfan/Medoo": "^1.4",
+        "lifei6671/php-captcha": "^0.1.1"
     },
     "autoload": {
         "psr-4": {

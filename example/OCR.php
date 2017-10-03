@@ -7,6 +7,7 @@
  */
 
 namespace Mohuishou\ImageOCR\Example;
+
 use Mohuishou\ImageOCR\Image;
 use Mohuishou\ImageOCR\ImageOCR;
 use Mohuishou\ImageOCR\ImageTool;
@@ -17,7 +18,8 @@ use Mohuishou\ImageOCR\ImageTool;
  * @author mohuishou<1@lailin.xyz>
  * @package Mohuishou\ImageOCR
  */
-class OCR {
+class OCR
+{
 
     protected $image_ocr;
 
@@ -37,13 +39,14 @@ class OCR {
         $this->image_ocr->setStandardHeight(20);
     }
 
-    public function standard(){
+    public function standard()
+    {
         //避免重复调用
-        if (!empty($this->standard_data)){
+        if (!empty($this->standard_data)) {
             return $this->standard_data;
         }
 
-        try{
+        try {
             //第一步灰度化
             $this->image_ocr->grey();
 
@@ -58,20 +61,22 @@ class OCR {
 
             //第五步标准化
             return $this->image_ocr->standard();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             echo $e->getMessage();
         }
         return false;
     }
 
-    public function draw(){
-        foreach ($this->standard() as $v){
+    public function draw()
+    {
+        foreach ($this->standard() as $v) {
             ImageTool::drawBrowser($v);
             echo "<br />";
         }
     }
 
-    public function save($path){
+    public function save($path)
+    {
         $this->image_ocr->saveImage($path);
     }
 
@@ -79,15 +84,16 @@ class OCR {
      * 返回识别结果
      * @author mohuishou<1@lailin.xyz>
      */
-    public function ocr(){
+    public function ocr()
+    {
         $res = [];
         $hash_data=$this->getHash();
-        $db=new StorageFile();
+        $db=Storage::getInstance();
         $samples=$db->get();
-        foreach ($hash_data as $k=>$v){
-            $res[]=$this->compare($v,$samples);
+        foreach ($hash_data as $k => $v) {
+            $res[]=$this->compare($v, $samples);
         }
-        return implode("",$res);
+        return implode("", $res);
     }
 
     /**
@@ -97,45 +103,46 @@ class OCR {
      * @param array $samples 特征值库的数组
      * @return string $code 返回识别的字符
      */
-    public function compare($hash,$samples) {
+    public function compare($hash, $samples)
+    {
         $code=0;
         $s = 0;
-        foreach ($samples as $k=>$v){
-            foreach ($v as $val){
-                $samples_hash_data=$val;
-                $c = count( array_intersect_assoc ($samples_hash_data, $hash) );
-                if($c>$s){
-                    $s=$c;
-                    $code=$k;
-                }
-                if($s>0.99*count($samples_hash_data)){
-                    return $k;
-                }
+        foreach ($samples as $k => $v) {
+            $samples_hash_data=str_split($v["hash"]);
+            $c = count( array_intersect_assoc ($samples_hash_data, $hash) );
+            if ($c>$s) {
+                $s=$c;
+                $code=$v["code"];
+            }
+            if ($s>0.99*count($samples_hash_data)) {
+                return $k;
             }
         }
         return $code;
     }
 
-    public function getHash(){
-        if (!empty($this->hash_data)){
+    public function getHash()
+    {
+        if (!empty($this->hash_data)) {
             return $this->hash_data;
         }
         $standard=$this->standard();
-        foreach ($standard as $k=>$v){
+        foreach ($standard as $k => $v) {
             $this->hash_data[$k]=[];
-            foreach ($v as $value){
-                $this->hash_data[$k]=array_merge($this->hash_data[$k],$value);
+            foreach ($v as $value) {
+                $this->hash_data[$k]=array_merge($this->hash_data[$k], $value);
             }
         }
         return $this->hash_data;
     }
 
 
-    public function study($code){
+    public function study($code)
+    {
         $hash_data=$this->getHash();
         $standard_data=$this->standard();
         $code_arr=str_split($code);
-        if(count($code_arr)!=count($standard_data)){
+        if (count($code_arr)!=count($standard_data)) {
             echo "错误！您输入的验证码位数与识别的位数不符，请检查您的验证码！<br />";
             echo "您输入的字符串为：$code <br />";
             echo "标准化数组为：<br />";
@@ -143,8 +150,8 @@ class OCR {
             exit(0);
         }
         $db=Storage::getInstance();
-        foreach ($code_arr as $k=>$v){
-            $db->add($v,$hash_data[$k]);
+        foreach ($code_arr as $k => $v) {
+            $db->add($v, $hash_data[$k]);
         }
     }
 }
