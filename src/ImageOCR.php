@@ -8,7 +8,8 @@
 
 namespace Mohuishou\ImageOCR;
 
-class ImageOCR{
+class ImageOCR
+{
 
     /**
      * 标准化字符
@@ -16,6 +17,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      */
     protected $standard_data=[];
+
+    protected $is_debug = false;
 
     /**
      * @var Image
@@ -70,7 +73,8 @@ class ImageOCR{
      * BaseOCR constructor.
      * @param Image $image
      */
-    public function __construct(Image $image){
+    public function __construct(Image $image)
+    {
         $this->image=$image;
     }
 
@@ -79,8 +83,9 @@ class ImageOCR{
      * @param string $path 需要保存的图片路径
      * @author mohuishou<1@lailin.xyz>
      */
-    public function saveImage($path){
-        imagepng($this->image->in_img,$path);
+    public function saveImage($path)
+    {
+        imagepng($this->image->in_img, $path);
     }
 
     /**
@@ -88,7 +93,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @return array
      */
-    public function grey(){
+    public function grey()
+    {
         return $this->grey_data=$this->image->rgb2grey();
     }
 
@@ -98,10 +104,11 @@ class ImageOCR{
      * @param null|int $min_grey 最小灰度阈值
      * @author mohuishou<1@lailin.xyz>
      */
-    public function hash($max_grey=null,$min_grey=null){
+    public function hash($max_grey = null, $min_grey = null)
+    {
         $max_grey==null && $max_grey=$this->max_grey;
         $min_grey==null && $min_grey=$this->min_grey;
-        $this->hash_data=$this->image->imageHash($this->grey_data,$max_grey,$min_grey);
+        $this->hash_data=$this->image->imageHash($this->grey_data, $max_grey, $min_grey);
     }
 
     /**
@@ -113,9 +120,10 @@ class ImageOCR{
      * @return array $hash_data 二值化图像数组
      * @throws \Exception
      */
-    public function hashByBackground($model=self::MAX_MODEL,$max_grey=null,$min_grey=null){
+    public function hashByBackground($model = self::MAX_MODEL, $max_grey = null, $min_grey = null)
+    {
         $bg_grey=$this->image->getBgGrey($this->grey_data);
-        switch ($model){
+        switch ($model) {
             case 0:
                 $min_grey=$bg_grey;
                 break;
@@ -128,7 +136,7 @@ class ImageOCR{
             default:
                 throw new \Exception("请选择正确模式！");
         }
-        return $this->hash($max_grey,$min_grey);
+        return $this->hash($max_grey, $min_grey);
     }
 
 
@@ -137,7 +145,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @throws \Exception
      */
-    public function removeSpots(){
+    public function removeSpots()
+    {
         $this->checkHashData();
         $this->hash_data=$this->image->removeHotSpots($this->hash_data);
     }
@@ -146,7 +155,8 @@ class ImageOCR{
      * 连通域去噪
      * @author mohuishou<1@lailin.xyz>
      */
-    public function removeSpotsByConnect(){
+    public function removeSpotsByConnect()
+    {
         $this->checkImageConnect();
         $this->hash_data=$this->image_connect->removeHotSpots();
     }
@@ -155,7 +165,8 @@ class ImageOCR{
      * 连通域分割
      * @author mohuishou<1@lailin.xyz>
      */
-    public function splitByConnect(){
+    public function splitByConnect()
+    {
         $this->checkImageConnect();
         $this->standard_data=$this->image_connect->split();
     }
@@ -164,8 +175,8 @@ class ImageOCR{
      * 滴水算法分割
      * @author mohuishou<1@lailin.xyz>
      */
-    public function splitByWater(){
-
+    public function splitByWater()
+    {
     }
 
 
@@ -175,9 +186,12 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @throws \Exception
      */
-    public function standard(){
-        if ($this->standard_data==null)
-            throw new \Exception("请先获取分割之后的图片",5);
+    public function standard()
+    {
+        if ($this->standard_data==null) {
+            $this->is_debug && ImageTool::drawBrowser($this->hash_data);
+            throw new \Exception("请先获取分割之后的图片", 5);
+        }
         $data=[];
         foreach ($this->standard_data as $item) {
             $data[]=$this->image->standard($item);
@@ -190,9 +204,11 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @throws \Exception
      */
-    protected function checkImageConnect(){
-        if (!($this->image_connect instanceof ImageConnect)){
-            throw new \Exception("请先调用setImageConnect初始化ImageConnect类",4);
+    protected function checkImageConnect()
+    {
+        if (!($this->image_connect instanceof ImageConnect)) {
+            $this->is_debug && ImageTool::drawBrowser($this->hash_data);
+            throw new \Exception("请先调用setImageConnect初始化ImageConnect类", 4);
         }
     }
 
@@ -201,16 +217,19 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @throws \Exception
      */
-    protected function checkHashData(){
-        if ($this->hash_data==null)
-            throw new \Exception("请先将图片二值化",4);
+    protected function checkHashData()
+    {
+        if ($this->hash_data==null) {
+            throw new \Exception("请先将图片二值化", 4);
+        }
     }
 
     /**
      * 初始化ImageConnect
      * @author mohuishou<1@lailin.xyz>
      */
-    public function setImageConnect(){
+    public function setImageConnect()
+    {
         $this->checkHashData();
         $this->image_connect=new ImageConnect($this->hash_data);
     }
@@ -220,7 +239,8 @@ class ImageOCR{
      * @param Image $image
      * @author mohuishou<1@lailin.xyz>
      */
-    public function setImage(Image $image){
+    public function setImage(Image $image)
+    {
         $this->image=$image;
     }
 
@@ -229,7 +249,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @return array
      */
-    public function getStandardData(){
+    public function getStandardData()
+    {
         return $this->standard_data;
     }
 
@@ -238,7 +259,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @return mixed
      */
-    public function setMaxGrey($max_grey){
+    public function setMaxGrey($max_grey)
+    {
         return $this->max_grey=$max_grey;
     }
 
@@ -247,7 +269,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @return mixed
      */
-    public function setMinGrey($min_grey){
+    public function setMinGrey($min_grey)
+    {
         return $this->min_grey=$min_grey;
     }
 
@@ -256,7 +279,8 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @return mixed
      */
-    public function setStandardWidth($standard_width){
+    public function setStandardWidth($standard_width)
+    {
         return $this->image->standard_width=$standard_width;
     }
 
@@ -265,8 +289,19 @@ class ImageOCR{
      * @author mohuishou<1@lailin.xyz>
      * @return mixed
      */
-    public function setStandardHeight($standard_height){
+    public function setStandardHeight($standard_height)
+    {
         return $this->image->standard_height=$standard_height;
     }
-}
 
+    /**
+     * 设置debug模式
+     * @param $debug
+     * @author mohuishou<1@lailin.xyz>
+     * @return mixed
+     */
+    public function setDebug($debug = false)
+    {
+        $this->is_debug = $debug;
+    }
+}

@@ -335,6 +335,4 @@ class ImageWater{
         }
         return $this->data[$i+1]-$this->data[$i];
     }
-
-
 }

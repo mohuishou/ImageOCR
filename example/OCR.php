@@ -32,8 +32,11 @@ class OCR
         $image=new Image($path);
         $this->image_ocr=new ImageOCR($image);
 
+        //开启的debug模式
+        $this->image_ocr->setDebug(true);        
+
         //初始化
-        $this->image_ocr->setMaxGrey(90);
+        $this->image_ocr->setMaxGrey(255);
         $this->image_ocr->setMinGrey(10);
         $this->image_ocr->setStandardWidth(13);
         $this->image_ocr->setStandardHeight(20);

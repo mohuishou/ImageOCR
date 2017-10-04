@@ -3,6 +3,8 @@
 > php验证码识别库，对于非粘连字符具有很好的识别效果，对于一般粘连字符也能有较为良好的识别
 > 除噪算法支持孤立点除杂和连通域除噪，分割算法支持等宽分割、连通域分割以及滴水算法分割
 
+## 示例效果
+![示例](./img/1.png)
 
 ## Install
 ```
@@ -36,6 +38,11 @@ $image_ocr->setMinGrey(10);
 ```php
 $image_ocr->setStandardWidth(13);
 $image_ocr->setStandardHeight(20);
+```
+
+### 开启Debug
+```php
+$image_ocr->setDebug(true);
 ```
 
 ### 灰度化
@@ -102,7 +109,7 @@ try{
 }
 ````
 
-#### 非粘连字符串
+#### 粘连字符串
 滴水算法分割
 
 TODO: 待测试
