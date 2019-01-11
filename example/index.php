@@ -21,8 +21,6 @@ $img_path=__DIR__."/img/1.png";
 $captch->save($img_path,1);
 
 $img=new \Mohuishou\ImageOCR\Example\OCR($img_path);
-
-echo "识别结果" . $img->ocr();
 ?>
 <!doctype html>
 <html lang="en">
@@ -33,7 +31,15 @@ echo "识别结果" . $img->ocr();
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+<style>
+body {
+    text-align: center;
+}
+</style>
 <body>
-<img src="img/1.png" alt="">
+<p><?php echo "识别结果: " . $img->ocr(); ?></p>
+<br />
+<img src="img/1.png" alt=""><br />
+<a href="https://github.com/mohuishou/ImageOCR">Form mohuishou/ImageOCR</a>
 </body>
 </html>

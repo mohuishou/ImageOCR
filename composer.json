@@ -1,19 +1,26 @@
 {
-    "name": "mohuishou/image-ocr",
-    "description":"验证码识别",
-    "keywords":["image","ocr","验证码","验证码识别"],
-    "version":"0.1.1",
-    "license":"MIT",
-    "authors": [
-        {
-            "name": "mohuishou",
-            "email": "1@lailin.xyz"
-        }
-    ],
-    "require": {
-        "php":">5.5"
-    },
-    "autoload": {
-        "psr-4": {"Mohuishou\\ImageOCR\\": "./src/"}
+  "name": "mohuishou/image-ocr",
+  "description": "验证码识别",
+  "keywords": [
+    "image",
+    "ocr",
+    "验证码",
+    "验证码识别"
+  ],
+  "version": "0.1.2",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "mohuishou",
+      "email": "1@lailin.xyz"
     }
+  ],
+  "require": {
+    "php": ">5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mohuishou\\ImageOCR\\": "src/"
+    }
+  }
 }

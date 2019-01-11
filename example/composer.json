@@ -1,23 +1,22 @@
 {
-    "name": "mohuishou/imageocr-example",
-    "description": "the example for mohuishou/imageocr",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "mohuishou",
-            "email": "1@lailin.xyz"
-        }
-    ],
-    "require": {
-        "catfan/Medoo": "^1.4",
-        "lifei6671/php-captcha": "^0.1.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "Mohuishou\\ImageOCR\\": "../src/",
-            "Mohuishou\\ImageOCR\\Example\\": "./"
-        }
-
+  "name": "mohuishou/imageocr-example",
+  "description": "the example for mohuishou/imageocr",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "mohuishou",
+      "email": "1@lailin.xyz"
     }
+  ],
+  "require": {
+    "catfan/Medoo": "^1.4",
+    "lifei6671/php-captcha": "^0.1.1",
+    "mohuishou/image-ocr": "^0.1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mohuishou\\ImageOCR\\Example\\": "./"
+    }
+  }
 }
